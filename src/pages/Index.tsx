@@ -4,6 +4,7 @@ import GameItem from '@/components/GameItem';
 import Header from '@/components/Header';
 import BottomBar from '@/components/BottomBar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from 'react';
 
 const games = [
   {
@@ -27,27 +28,66 @@ const games = [
 ];
 
 const Index = () => {
+  const [bgPosition, setBgPosition] = useState({ x: 0, y: 0 });
+
+  // Subtle background animation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBgPosition({
+        x: Math.sin(Date.now() / 10000) * 5,
+        y: Math.cos(Date.now() / 10000) * 5
+      });
+    }, 50);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#1a1a26] bg-opacity-90 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://i.imgur.com/4jKLtPg.jpg')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
+    <div className="min-h-screen flex flex-col bg-[#0a0a14] relative overflow-hidden">
+      {/* Animated background with TWW theme */}
+      <div 
+        className="absolute inset-0 bg-blend-overlay opacity-40 transition-transform duration-[30s] ease-linear"
+        style={{
+          backgroundImage: `
+            url('https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070'), 
+            url('https://images.unsplash.com/photo-1518562180175-34a163b1a9cf?q=80&w=2074')
+          `,
+          backgroundSize: 'cover',
+          backgroundPosition: `calc(50% + ${bgPosition.x}px) calc(50% + ${bgPosition.y}px)`,
+          filter: 'brightness(0.4) saturate(1.2)'
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a14] via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-[#0a0a14] opacity-50"></div>
+      </div>
+      
+      {/* Animated particles overlay */}
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover opacity-10 animate-pulse"></div>
       
       <div className="z-10 flex-1 flex flex-col">
-        <Header />
+        <div className="flex justify-between items-start p-8">
+          <Header />
+          
+          {/* Navigation tabs moved to right top corner */}
+          <div className="flex space-x-6 text-sm font-medium">
+            <Link to="#news" className="text-yellow-400 hover:text-yellow-300 transition-colors border-b-2 border-yellow-400 pb-1">
+              НОВОСТИ
+            </Link>
+            <Link to="#shop" className="text-gray-400 hover:text-yellow-300 transition-colors border-b-2 border-transparent hover:border-yellow-400 pb-1">
+              МАГАЗИН
+            </Link>
+            <Link to="#forum" className="text-gray-400 hover:text-yellow-300 transition-colors border-b-2 border-transparent hover:border-yellow-400 pb-1">
+              ФОРУМ
+            </Link>
+          </div>
+        </div>
         
         <Tabs defaultValue="games" className="flex-1">
-          <TabsList className="bg-transparent border-b border-slate-700 px-8 justify-start gap-8">
-            <TabsTrigger value="games" className="text-yellow-400 data-[state=active]:text-yellow-400 data-[state=active]:border-b-2 data-[state=active]:border-yellow-400 rounded-none">
-              ВАШИ ИГРЫ
-            </TabsTrigger>
-            <TabsTrigger value="news" className="text-slate-400 data-[state=active]:text-yellow-400 data-[state=active]:border-b-2 data-[state=active]:border-yellow-400 rounded-none">
-              НОВОСТИ
-            </TabsTrigger>
-            <TabsTrigger value="shop" className="text-slate-400 data-[state=active]:text-yellow-400 data-[state=active]:border-b-2 data-[state=active]:border-yellow-400 rounded-none">
-              МАГАЗИН
-            </TabsTrigger>
-            <TabsTrigger value="forum" className="text-slate-400 data-[state=active]:text-yellow-400 data-[state=active]:border-b-2 data-[state=active]:border-yellow-400 rounded-none">
-              ФОРУМ
-            </TabsTrigger>
+          <TabsList className="bg-transparent border-b border-slate-700 px-8 justify-start gap-8 hidden">
+            <TabsTrigger value="games">ВАШИ ИГРЫ</TabsTrigger>
+            <TabsTrigger value="news">НОВОСТИ</TabsTrigger>
+            <TabsTrigger value="shop">МАГАЗИН</TabsTrigger>
+            <TabsTrigger value="forum">ФОРУМ</TabsTrigger>
           </TabsList>
           
           <TabsContent value="games" className="p-8 flex-1">
